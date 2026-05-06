@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mongodb:
     image: mongo
@@ -12,6 +10,42 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3307:3306"
+
+  course-service:
+    build: ./course-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongodb
+
+  enrollment-service:
+    build: ./enrollment-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mysql
+
+  quiz-service:
+    build: ./quiz-service
+    ports:
+      - "3005:3005"
+    depends_on:
+      - mysql
+
+  exam-service:
+    build: ./exam-service
+    ports:
+      - "3004:3004"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3007:3007"
+    depends_on:
+      - rabbitmq
 
   postgres:
     image: postgres
