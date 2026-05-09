@@ -1,127 +1,144 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
 
-    await Exam.deleteMany({
-      category: "Networking",
-    });
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.create({
-      course: "Networking",
+      VALUES
 
-      category: "Networking",
+      (
+        'Ujian Dasar Networking',
+        'Networking',
+        'Exam mengenai dasar jaringan komputer',
+        35,
+        5,
+        70
+      )
 
-      title: "Ujian Dasar Networking",
+    `);
 
-      description:
-        "Exam mengenai konsep dasar jaringan komputer, perangkat jaringan, protokol internet, dan keamanan jaringan.",
+    const examResult = await pool.query(`
 
-      duration: 35,
+        SELECT id FROM exams
 
-      totalQuestions: 5,
+        WHERE category='Networking'
 
-      passingScore: 70,
+        ORDER BY id DESC
 
-      questions: [
-        {
-          question: "Apa pengertian jaringan komputer?",
+        LIMIT 1
 
-          options: [
-            "Sistem yang menghubungkan beberapa perangkat untuk berbagi data",
+      `);
 
-            "Perangkat untuk mencetak dokumen",
+    const examId = examResult.rows[0].id;
 
-            "Bahasa pemrograman",
+    await pool.query(`
 
-            "Software editing",
-          ],
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-          correctAnswer:
-            "Sistem yang menghubungkan beberapa perangkat untuk berbagi data",
-        },
+      VALUES
 
-        {
-          question:
-            "Perangkat yang digunakan untuk menghubungkan beberapa jaringan adalah?",
+      (
+        ${examId},
 
-          options: ["Router", "Keyboard", "Scanner", "Printer"],
+        'Apa pengertian jaringan komputer?',
 
-          correctAnswer: "Router",
-        },
+        'Sistem yang menghubungkan perangkat untuk berbagi data',
 
-        {
-          question: "Protokol utama internet adalah?",
+        'Perangkat keras',
 
-          options: ["TCP/IP", "HTML", "CSS", "SMTP"],
+        'Bahasa pemrograman',
 
-          correctAnswer: "TCP/IP",
-        },
+        'Software editing',
 
-        {
-          question: "Fungsi switch dalam jaringan adalah?",
+        'Sistem yang menghubungkan perangkat untuk berbagi data'
+      ),
 
-          options: [
-            "Menghubungkan perangkat dalam satu LAN",
+      (
+        ${examId},
 
-            "Menghapus data",
+        'Perangkat untuk menghubungkan jaringan disebut?',
 
-            "Mencetak gambar",
+        'Router',
 
-            "Membuat website",
-          ],
+        'Keyboard',
 
-          correctAnswer: "Menghubungkan perangkat dalam satu LAN",
-        },
+        'Scanner',
 
-        {
-          question: "Firewall digunakan untuk?",
+        'Printer',
 
-          options: [
-            "Melindungi jaringan dari akses tidak sah",
+        'Router'
+      ),
 
-            "Mengatur monitor",
+      (
+        ${examId},
 
-            "Menghapus RAM",
+        'Protokol utama internet adalah?',
 
-            "Meningkatkan kapasitas storage",
-          ],
+        'TCP/IP',
 
-          correctAnswer: "Melindungi jaringan dari akses tidak sah",
-        },
-      ],
-    });
+        'HTML',
+
+        'CSS',
+
+        'SMTP',
+
+        'TCP/IP'
+      ),
+
+      (
+        ${examId},
+
+        'Fungsi switch dalam jaringan adalah?',
+
+        'Menghubungkan perangkat dalam LAN',
+
+        'Menghapus data',
+
+        'Mencetak gambar',
+
+        'Menghapus RAM',
+
+        'Menghubungkan perangkat dalam LAN'
+      ),
+
+      (
+        ${examId},
+
+        'Firewall digunakan untuk?',
+
+        'Melindungi jaringan dari akses tidak sah',
+
+        'Menghapus CPU',
+
+        'Mengatur monitor',
+
+        'Menghapus internet',
+
+        'Melindungi jaringan dari akses tidak sah'
+      )
+
+    `);
 
     console.log("Exam Networking berhasil dibuat");
 
