@@ -4,33 +4,12 @@ services:
     ports:
       - "27018:27017"
 
-  mysql:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "3307:3306"
-
   course-service:
     build: ./course-service
     ports:
       - "3002:3002"
     depends_on:
       - mongodb
-
-  enrollment-service:
-    build: ./enrollment-service
-    ports:
-      - "3003:3003"
-    depends_on:
-      - mysql
-
-  quiz-service:
-    build: ./quiz-service
-    ports:
-      - "3005:3005"
-    depends_on:
-      - mysql
 
   exam-service:
     build: ./exam-service

@@ -10,25 +10,34 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Notification Service Running");
-});
+async function startServer() {
+  try {
+    const channel = await connectRabbitMQ();
 
-const startServer = async () => {
-  const channel = await connectRabbitMQ();
+    if (!channel) {
+      console.log("RabbitMQ channel not ready");
+      return;
+    }
 
-  channel.consume("exam_queue", (message) => {
-    const data = JSON.parse(message.content);
+    channel.consume("exam_queue", (message) => {
+      const data = JSON.parse(message.content);
 
-    console.log("Notification Received:");
-    console.log(data);
+      console.log("Notification Received:");
+      console.log(data);
 
-    channel.ack(message);
-  });
+      channel.ack(message);
+    });
 
-  app.listen(process.env.PORT, () => {
-    console.log("Notification Service Running on 3007");
-  });
-};
+    app.get("/", (req, res) => {
+      res.send("Notification Service Running");
+    });
+
+    app.listen(process.env.PORT, () => {
+      console.log(`Notification Service running on ${process.env.PORT}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 startServer();
