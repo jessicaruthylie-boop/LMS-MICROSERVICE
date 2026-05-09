@@ -17,4 +17,7 @@
     "mongoose": "^9.6.1"
   },
   "description": ""
+
+"scripts": {
+  "start": "node index.js"
 }
