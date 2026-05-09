@@ -1,133 +1,144 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
 
-    await Exam.deleteMany({
-      category: "Blockchain",
-    });
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.create({
-      course: "Blockchain",
+      VALUES
 
-      category: "Blockchain",
+      (
+        'Ujian Dasar Blockchain',
+        'Blockchain',
+        'Exam mengenai dasar blockchain dan cryptocurrency',
+        35,
+        5,
+        70
+      )
 
-      title: "Ujian Dasar Blockchain",
+    `);
 
-      description:
-        "Exam mengenai konsep dasar blockchain, cryptocurrency, smart contract, dan teknologi decentralized system.",
+    const examResult = await pool.query(`
 
-      duration: 35,
+        SELECT id FROM exams
 
-      totalQuestions: 5,
+        WHERE category='Blockchain'
 
-      passingScore: 70,
+        ORDER BY id DESC
 
-      questions: [
-        {
-          question: "Apa pengertian Blockchain?",
+        LIMIT 1
 
-          options: [
-            "Teknologi database terdistribusi",
+      `);
 
-            "Perangkat keras komputer",
+    const examId = examResult.rows[0].id;
 
-            "Sistem operasi",
+    await pool.query(`
 
-            "Bahasa pemrograman",
-          ],
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-          correctAnswer: "Teknologi database terdistribusi",
-        },
+      VALUES
 
-        {
-          question: "Blockchain digunakan untuk?",
+      (
+        ${examId},
 
-          options: [
-            "Menyimpan data secara terdesentralisasi",
+        'Apa pengertian Blockchain?',
 
-            "Menghapus internet",
+        'Database terdistribusi',
 
-            "Mengganti RAM",
+        'Perangkat keras',
 
-            "Mencetak dokumen",
-          ],
+        'Bahasa pemrograman',
 
-          correctAnswer: "Menyimpan data secara terdesentralisasi",
-        },
+        'Sistem operasi',
 
-        {
-          question: "Cryptocurrency pertama berbasis blockchain adalah?",
+        'Database terdistribusi'
+      ),
 
-          options: ["Ethereum", "Bitcoin", "Dogecoin", "Litecoin"],
+      (
+        ${examId},
 
-          correctAnswer: "Bitcoin",
-        },
+        'Cryptocurrency pertama adalah?',
 
-        {
-          question: "Smart Contract adalah?",
+        'Ethereum',
 
-          options: [
-            "Kontrak digital otomatis pada blockchain",
+        'Bitcoin',
 
-            "Perangkat jaringan",
+        'Dogecoin',
 
-            "Software antivirus",
+        'Litecoin',
 
-            "Sistem operasi mobile",
-          ],
+        'Bitcoin'
+      ),
 
-          correctAnswer: "Kontrak digital otomatis pada blockchain",
-        },
+      (
+        ${examId},
 
-        {
-          question: "Keunggulan utama blockchain adalah?",
+        'Smart Contract adalah?',
 
-          options: [
-            "Transparansi dan keamanan data",
+        'Kontrak digital otomatis',
 
-            "Mengurangi RAM",
+        'Software antivirus',
 
-            "Menghapus CPU",
+        'Perangkat jaringan',
 
-            "Mengurangi internet",
-          ],
+        'Sistem operasi',
 
-          correctAnswer: "Transparansi dan keamanan data",
-        },
-      ],
-    });
+        'Kontrak digital otomatis'
+      ),
+
+      (
+        ${examId},
+
+        'Keunggulan blockchain adalah?',
+
+        'Transparansi data',
+
+        'Menghapus internet',
+
+        'Mengurangi RAM',
+
+        'Menghapus CPU',
+
+        'Transparansi data'
+      ),
+
+      (
+        ${examId},
+
+        'Blockchain bersifat?',
+
+        'Terdesentralisasi',
+
+        'Offline',
+
+        'Manual',
+
+        'Analog',
+
+        'Terdesentralisasi'
+      )
+
+    `);
 
     console.log("Exam Blockchain berhasil dibuat");
 
