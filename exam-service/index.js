@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-
+const examRoutes = require("./routes/examRoutes");
 const connectRabbitMQ = require("./config/rabbitmq");
 
 const app = express();
