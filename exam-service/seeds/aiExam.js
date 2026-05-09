@@ -1,135 +1,146 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
 
-    await Exam.deleteMany({
-      category: "Artificial Intelligence",
-    });
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.create({
-      course: "Artificial Intelligence",
+      VALUES
 
-      category: "Artificial Intelligence",
+      (
+        'Ujian Dasar Artificial Intelligence',
+        'Artificial Intelligence',
+        'Exam mengenai dasar AI dan Machine Learning',
+        35,
+        5,
+        70
+      )
 
-      title: "Ujian Dasar Artificial Intelligence",
+    `);
 
-      description:
-        "Exam mengenai konsep dasar Artificial Intelligence, Machine Learning, dan perkembangan teknologi AI modern.",
+    const examResult = await pool.query(`
 
-      duration: 35,
+        SELECT id FROM exams
 
-      totalQuestions: 5,
+        WHERE category='Artificial Intelligence'
 
-      passingScore: 70,
+        ORDER BY id DESC
 
-      questions: [
-        {
-          question: "Apa pengertian Artificial Intelligence?",
+        LIMIT 1
 
-          options: [
-            "Teknologi kecerdasan buatan pada komputer",
+      `);
 
-            "Perangkat keras jaringan",
+    const examId = examResult.rows[0].id;
 
-            "Sistem operasi komputer",
+    await pool.query(`
 
-            "Bahasa pemrograman",
-          ],
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-          correctAnswer: "Teknologi kecerdasan buatan pada komputer",
-        },
+      VALUES
 
-        {
-          question: "AI digunakan untuk?",
+      (
+        ${examId},
 
-          options: [
-            "Mengolah makanan",
+        'Apa pengertian Artificial Intelligence?',
 
-            "Membuat listrik",
+        'Teknologi kecerdasan buatan',
 
-            "Analisis data dan pengambilan keputusan otomatis",
+        'Perangkat jaringan',
 
-            "Menghapus hardware",
-          ],
+        'Sistem operasi',
 
-          correctAnswer: "Analisis data dan pengambilan keputusan otomatis",
-        },
+        'Bahasa pemrograman',
 
-        {
-          question: "Machine Learning adalah?",
+        'Teknologi kecerdasan buatan'
+      ),
 
-          options: [
-            "Teknologi jaringan internet",
+      (
+        ${examId},
 
-            "Cabang AI yang memungkinkan sistem belajar dari data",
+        'Machine Learning adalah?',
 
-            "Perangkat keras komputer",
+        'Cabang AI yang belajar dari data',
 
-            "Software editing video",
-          ],
+        'Hardware komputer',
 
-          correctAnswer: "Cabang AI yang memungkinkan sistem belajar dari data",
-        },
+        'Database system',
 
-        {
-          question: "Contoh penerapan AI adalah?",
+        'Software desain',
 
-          options: ["Chatbot", "Kabel LAN", "Flashdisk", "Monitor CRT"],
+        'Cabang AI yang belajar dari data'
+      ),
 
-          correctAnswer: "Chatbot",
-        },
+      (
+        ${examId},
 
-        {
-          question: "Teknologi AI modern yang digunakan ChatGPT disebut?",
+        'Contoh AI modern adalah?',
 
-          options: [
-            "Blockchain",
+        'ChatGPT',
 
-            "Large Language Model",
+        'Printer',
 
-            "Router",
+        'RAM',
 
-            "Fiber Optic",
-          ],
+        'Switch',
 
-          correctAnswer: "Large Language Model",
-        },
-      ],
-    });
+        'ChatGPT'
+      ),
 
-    console.log("Exam Artificial Intelligence berhasil dibuat");
+      (
+        ${examId},
+
+        'AI digunakan untuk?',
+
+        'Analisis data otomatis',
+
+        'Menghapus internet',
+
+        'Mengganti monitor',
+
+        'Mencetak uang',
+
+        'Analisis data otomatis'
+      ),
+
+      (
+        ${examId},
+
+        'Teknologi utama ChatGPT adalah?',
+
+        'Large Language Model',
+
+        'Fiber Optic',
+
+        'CPU Only',
+
+        'Blockchain',
+
+        'Large Language Model'
+      )
+
+    `);
+
+    console.log("Exam AI berhasil dibuat");
 
     process.exit();
   } catch (error) {
