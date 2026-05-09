@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+
 const cors = require("cors");
 
 const connectRabbitMQ = require("./config/rabbitmq");
@@ -8,36 +9,55 @@ const connectRabbitMQ = require("./config/rabbitmq");
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
 
-async function startServer() {
-  try {
-    const channel = await connectRabbitMQ();
+let notifications = [];
 
-    if (!channel) {
-      console.log("RabbitMQ channel not ready");
-      return;
-    }
+app.get("/", (req, res) => {
+  res.send("Notification Service Running");
+});
 
-    channel.consume("exam_queue", (message) => {
-      const data = JSON.parse(message.content);
+app.get("/notifications", (req, res) => {
+  res.json(notifications);
+});
 
-      console.log("Notification Received:");
-      console.log(data);
+const startServer = async () => {
+  const channel = await connectRabbitMQ();
+
+  channel.consume(
+    "exam_queue",
+
+    (message) => {
+      const data = JSON.parse(message.content.toString());
+
+      const notification = {
+        student: data.student,
+
+        exam: data.exam,
+
+        status: data.status,
+
+        message: `${data.student} completed ${data.exam}`,
+
+        createdAt: new Date(),
+      };
+
+      notifications.push(notification);
+
+      console.log("New Notification:", notification);
 
       channel.ack(message);
-    });
+    },
+  );
 
-    app.get("/", (req, res) => {
-      res.send("Notification Service Running");
-    });
+  app.listen(
+    process.env.PORT,
 
-    app.listen(process.env.PORT, () => {
-      console.log(`Notification Service running on ${process.env.PORT}`);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
+    () => {
+      console.log("Notification Service Running on 3007");
+    },
+  );
+};
 
 startServer();

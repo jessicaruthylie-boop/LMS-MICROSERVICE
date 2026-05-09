@@ -1,6 +1,6 @@
 const amqp = require("amqplib");
 
-async function connectRabbitMQ() {
+const connectRabbitMQ = async () => {
   try {
     const connection = await amqp.connect(process.env.RABBITMQ_URL);
 
@@ -13,8 +13,7 @@ async function connectRabbitMQ() {
     return channel;
   } catch (error) {
     console.log(error);
-    return null;
   }
-}
+};
 
 module.exports = connectRabbitMQ;
