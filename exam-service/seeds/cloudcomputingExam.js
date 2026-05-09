@@ -1,125 +1,144 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
 
-    await Exam.deleteMany({
-      category: "Cloud Computing",
-    });
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.create({
-      course: "Cloud Computing",
+      VALUES
 
-      category: "Cloud Computing",
+      (
+        'Ujian Dasar Cloud Computing',
+        'Cloud Computing',
+        'Exam mengenai dasar cloud computing dan virtualisasi',
+        35,
+        5,
+        70
+      )
 
-      title: "Ujian Dasar Cloud Computing",
+    `);
 
-      description:
-        "Exam mengenai konsep dasar cloud computing, virtualisasi, container, dan layanan cloud modern.",
+    const examResult = await pool.query(`
 
-      duration: 35,
+        SELECT id FROM exams
 
-      totalQuestions: 5,
+        WHERE category='Cloud Computing'
 
-      passingScore: 70,
+        ORDER BY id DESC
 
-      questions: [
-        {
-          question: "Apa pengertian Cloud Computing?",
+        LIMIT 1
 
-          options: [
-            "Teknologi penyimpanan dan layanan melalui internet",
+      `);
 
-            "Perangkat keras jaringan",
+    const examId = examResult.rows[0].id;
 
-            "Bahasa pemrograman",
+    await pool.query(`
 
-            "Sistem operasi komputer",
-          ],
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-          correctAnswer: "Teknologi penyimpanan dan layanan melalui internet",
-        },
+      VALUES
 
-        {
-          question: "Teknologi dasar yang mendukung cloud computing adalah?",
+      (
+        ${examId},
 
-          options: ["Virtualisasi", "Printer", "Monitor", "Scanner"],
+        'Apa pengertian Cloud Computing?',
 
-          correctAnswer: "Virtualisasi",
-        },
+        'Layanan komputasi melalui internet',
 
-        {
-          question: "AWS adalah layanan cloud milik?",
+        'Perangkat jaringan',
 
-          options: ["Google", "Amazon", "Microsoft", "Apple"],
+        'Bahasa pemrograman',
 
-          correctAnswer: "Amazon",
-        },
+        'Sistem operasi',
 
-        {
-          question: "Docker digunakan untuk?",
+        'Layanan komputasi melalui internet'
+      ),
 
-          options: [
-            "Container aplikasi",
+      (
+        ${examId},
 
-            "Menghapus database",
+        'Teknologi dasar Cloud Computing adalah?',
 
-            "Mengganti RAM",
+        'Virtualisasi',
 
-            "Mengedit gambar",
-          ],
+        'Scanner',
 
-          correctAnswer: "Container aplikasi",
-        },
+        'Printer',
 
-        {
-          question: "Kubernetes digunakan untuk?",
+        'Bluetooth',
 
-          options: [
-            "Mengelola container dalam skala besar",
+        'Virtualisasi'
+      ),
 
-            "Menghapus server",
+      (
+        ${examId},
 
-            "Membuat browser",
+        'AWS merupakan layanan cloud milik?',
 
-            "Mengatur monitor",
-          ],
+        'Google',
 
-          correctAnswer: "Mengelola container dalam skala besar",
-        },
-      ],
-    });
+        'Amazon',
+
+        'Microsoft',
+
+        'Apple',
+
+        'Amazon'
+      ),
+
+      (
+        ${examId},
+
+        'Docker digunakan untuk?',
+
+        'Container aplikasi',
+
+        'Menghapus RAM',
+
+        'Mengatur monitor',
+
+        'Menghapus database',
+
+        'Container aplikasi'
+      ),
+
+      (
+        ${examId},
+
+        'Kubernetes digunakan untuk?',
+
+        'Mengelola container',
+
+        'Menghapus internet',
+
+        'Mencetak dokumen',
+
+        'Mengatur CPU',
+
+        'Mengelola container'
+      )
+
+    `);
 
     console.log("Exam Cloud Computing berhasil dibuat");
 
