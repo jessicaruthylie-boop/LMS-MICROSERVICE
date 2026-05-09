@@ -1,5 +1,5 @@
 {
-  "name": "course-service",
+  "name": "notification-service",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -9,15 +9,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
     "amqplib": "^1.0.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.6.1"
-  },
-  "description": ""
-
-"scripts": {
-  "start": "node index.js"
+  }
 }
