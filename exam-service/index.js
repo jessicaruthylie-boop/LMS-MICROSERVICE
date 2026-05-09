@@ -14,24 +14,80 @@ app.use(cors());
 
 app.use(express.json());
 
+// =========================
+// ROUTES
+// =========================
+
 app.use("/exams", examRoutes);
 
-let channel;
+// =========================
+// ROOT
+// =========================
 
 app.get("/", (req, res) => {
   res.send("Exam Service Running");
 });
 
+// =========================
+// RABBITMQ
+// =========================
+
+let channel;
+
+app.post(
+  "/submit-exam",
+
+  async (req, res) => {
+    try {
+      const data = {
+        student: req.body.student,
+
+        exam: req.body.exam,
+
+        status: "completed",
+      };
+
+      if (channel) {
+        channel.sendToQueue(
+          "exam_queue",
+
+          Buffer.from(JSON.stringify(data)),
+        );
+      }
+
+      res.json({
+        message: "Exam submitted",
+
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        error: error.message,
+      });
+    }
+  },
+);
+
+// =========================
+// START SERVER
+// =========================
+
 const startServer = async () => {
-  channel = await connectRabbitMQ();
+  try {
+    channel = await connectRabbitMQ();
 
-  app.listen(
-    process.env.PORT,
+    app.listen(
+      process.env.PORT,
 
-    () => {
-      console.log("Exam Service Running on 3004");
-    },
-  );
+      () => {
+        console.log("Exam Service Running on 3004");
+      },
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 startServer();
