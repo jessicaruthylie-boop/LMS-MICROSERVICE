@@ -11,7 +11,7 @@ const connectRabbitMQ = require("./config/rabbitmq");
 const app = express();
 
 app.use(cors());
-
+app.use("/exams", examRoutes);
 app.use(express.json());
 
 let channel;
