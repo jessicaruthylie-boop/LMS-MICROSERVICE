@@ -4,29 +4,6 @@ services:
     ports:
       - "27018:27017"
 
-  course-service:
-    build: ./course-service
-    ports:
-      - "3002:3002"
-    depends_on:
-      - mongodb
-
-  exam-service:
-    build: ./exam-service
-    ports:
-      - "3004:3004"
-    depends_on:
-      - postgres
-      - rabbitmq
-
-  notification-service:
-  build: ./notification-service
-  ports:
-    - "3007:3007"
-  env_file:
-    - ./notification-service/.env
-  depends_on:
-    - rabbitmq
   postgres:
     image: postgres
     environment:
@@ -49,3 +26,28 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+
+  course-service:
+    build: ./course-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongodb
+
+  exam-service:
+    build: ./exam-service
+    ports:
+      - "3004:3004"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - mongodb
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3007:3007"
+    env_file:
+      - ./notification-service/.env
+    depends_on:
+      - rabbitmq
