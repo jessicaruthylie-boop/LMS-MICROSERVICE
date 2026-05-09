@@ -1,125 +1,144 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
 
-    await Exam.deleteMany({
-      category: "Operating System",
-    });
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.create({
-      course: "Operating System",
+      VALUES
 
-      category: "Operating System",
+      (
+        'Ujian Dasar Operating System',
+        'Operating System',
+        'Exam mengenai dasar sistem operasi komputer',
+        35,
+        5,
+        70
+      )
 
-      title: "Ujian Dasar Operating System",
+    `);
 
-      description:
-        "Exam mengenai konsep dasar sistem operasi, kernel, manajemen proses, dan operating system modern.",
+    const examResult = await pool.query(`
 
-      duration: 35,
+        SELECT id FROM exams
 
-      totalQuestions: 5,
+        WHERE category='Operating System'
 
-      passingScore: 70,
+        ORDER BY id DESC
 
-      questions: [
-        {
-          question: "Apa fungsi utama sistem operasi?",
+        LIMIT 1
 
-          options: [
-            "Mengatur seluruh aktivitas komputer",
+      `);
 
-            "Mencetak dokumen",
+    const examId = examResult.rows[0].id;
 
-            "Menghapus hardware",
+    await pool.query(`
 
-            "Membuat jaringan internet",
-          ],
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-          correctAnswer: "Mengatur seluruh aktivitas komputer",
-        },
+      VALUES
 
-        {
-          question: "Bagian inti dari sistem operasi disebut?",
+      (
+        ${examId},
 
-          options: ["Browser", "Kernel", "Database", "Compiler"],
+        'Apa fungsi utama sistem operasi?',
 
-          correctAnswer: "Kernel",
-        },
+        'Mengatur seluruh aktivitas komputer',
 
-        {
-          question: "Contoh sistem operasi open source adalah?",
+        'Menghapus internet',
 
-          options: [
-            "Linux",
+        'Mencetak uang',
 
-            "Windows XP",
+        'Mengatur monitor',
 
-            "Microsoft Office",
+        'Mengatur seluruh aktivitas komputer'
+      ),
 
-            "Adobe Photoshop",
-          ],
+      (
+        ${examId},
 
-          correctAnswer: "Linux",
-        },
+        'Bagian inti sistem operasi disebut?',
 
-        {
-          question: "Fungsi manajemen memori pada sistem operasi adalah?",
+        'Kernel',
 
-          options: [
-            "Mengatur penggunaan RAM",
+        'Browser',
 
-            "Menghapus CPU",
+        'Database',
 
-            "Mengatur printer",
+        'Compiler',
 
-            "Mengganti monitor",
-          ],
+        'Kernel'
+      ),
 
-          correctAnswer: "Mengatur penggunaan RAM",
-        },
+      (
+        ${examId},
 
-        {
-          question: "Android merupakan sistem operasi berbasis?",
+        'Contoh sistem operasi open source adalah?',
 
-          options: ["Linux", "UNIX", "DOS", "RouterOS"],
+        'Linux',
 
-          correctAnswer: "Linux",
-        },
-      ],
-    });
+        'Microsoft Office',
+
+        'Photoshop',
+
+        'Google Chrome',
+
+        'Linux'
+      ),
+
+      (
+        ${examId},
+
+        'Android berbasis pada?',
+
+        'Linux',
+
+        'DOS',
+
+        'UNIX',
+
+        'Fiber Optic',
+
+        'Linux'
+      ),
+
+      (
+        ${examId},
+
+        'Manajemen memori digunakan untuk?',
+
+        'Mengatur penggunaan RAM',
+
+        'Menghapus CPU',
+
+        'Mengatur printer',
+
+        'Menghapus database',
+
+        'Mengatur penggunaan RAM'
+      )
+
+    `);
 
     console.log("Exam Operating System berhasil dibuat");
 
