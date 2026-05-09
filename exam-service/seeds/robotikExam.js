@@ -1,126 +1,144 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
 
-    await Exam.deleteMany({
-      category: "Robotics",
-    });
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.create({
-      course: "Robotics",
+      VALUES
 
-      category: "Robotics",
+      (
+        'Ujian Dasar Robotics',
+        'Robotics',
+        'Exam mengenai dasar robotika dan teknologi robot modern',
+        35,
+        5,
+        70
+      )
 
-      title: "Ujian Dasar Robotics",
+    `);
 
-      description:
-        "Exam mengenai konsep dasar robotika, Artificial Intelligence pada robot, sensor, aktuator, dan teknologi robot modern.",
+    const examResult = await pool.query(`
 
-      duration: 35,
+        SELECT id FROM exams
 
-      totalQuestions: 5,
+        WHERE category='Robotics'
 
-      passingScore: 70,
+        ORDER BY id DESC
 
-      questions: [
-        {
-          question: "Apa pengertian robotika?",
+        LIMIT 1
 
-          options: [
-            "Bidang teknologi yang mempelajari robot",
+      `);
 
-            "Bahasa pemrograman",
+    const examId = examResult.rows[0].id;
 
-            "Perangkat jaringan",
+    await pool.query(`
 
-            "Software desain",
-          ],
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-          correctAnswer: "Bidang teknologi yang mempelajari robot",
-        },
+      VALUES
 
-        {
-          question:
-            "Komponen robot yang digunakan untuk mendeteksi lingkungan adalah?",
+      (
+        ${examId},
 
-          options: ["Sensor", "Monitor", "Printer", "Storage"],
+        'Apa pengertian robotika?',
 
-          correctAnswer: "Sensor",
-        },
+        'Bidang teknologi yang mempelajari robot',
 
-        {
-          question: "Artificial Intelligence pada robot digunakan untuk?",
+        'Bahasa pemrograman',
 
-          options: [
-            "Membuat robot dapat berpikir dan mengambil keputusan",
+        'Perangkat jaringan',
 
-            "Menghapus data",
+        'Software desain',
 
-            "Mengganti hardware",
+        'Bidang teknologi yang mempelajari robot'
+      ),
 
-            "Meningkatkan ukuran monitor",
-          ],
+      (
+        ${examId},
 
-          correctAnswer: "Membuat robot dapat berpikir dan mengambil keputusan",
-        },
+        'Komponen robot untuk mendeteksi lingkungan adalah?',
 
-        {
-          question: "Robot industri digunakan untuk?",
+        'Sensor',
 
-          options: [
-            "Otomatisasi proses produksi",
+        'Monitor',
 
-            "Menghapus internet",
+        'Printer',
 
-            "Mencetak dokumen",
+        'Storage',
 
-            "Mengatur RAM",
-          ],
+        'Sensor'
+      ),
 
-          correctAnswer: "Otomatisasi proses produksi",
-        },
+      (
+        ${examId},
 
-        {
-          question: "Drone termasuk jenis?",
+        'AI pada robot digunakan untuk?',
 
-          options: ["Robot terbang", "Sistem operasi", "Database", "Compiler"],
+        'Pengambilan keputusan otomatis',
 
-          correctAnswer: "Robot terbang",
-        },
-      ],
-    });
+        'Menghapus internet',
+
+        'Menghapus CPU',
+
+        'Mengatur monitor',
+
+        'Pengambilan keputusan otomatis'
+      ),
+
+      (
+        ${examId},
+
+        'Robot industri digunakan untuk?',
+
+        'Otomatisasi produksi',
+
+        'Menghapus data',
+
+        'Mencetak dokumen',
+
+        'Mengatur RAM',
+
+        'Otomatisasi produksi'
+      ),
+
+      (
+        ${examId},
+
+        'Drone termasuk jenis?',
+
+        'Robot terbang',
+
+        'Sistem operasi',
+
+        'Database',
+
+        'Compiler',
+
+        'Robot terbang'
+      )
+
+    `);
 
     console.log("Exam Robotics berhasil dibuat");
 
