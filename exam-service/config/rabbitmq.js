@@ -1,18 +1,22 @@
 const amqp = require("amqplib");
 
 const connectRabbitMQ = async () => {
-  try {
-    const connection = await amqp.connect("amqp://rabbitmq");
+  while (true) {
+    try {
+      const connection = await amqp.connect("amqp://rabbitmq");
 
-    const channel = await connection.createChannel();
+      const channel = await connection.createChannel();
 
-    await channel.assertQueue("exam_queue");
+      await channel.assertQueue("exam_queue");
 
-    console.log("RabbitMQ Connected");
+      console.log("RabbitMQ Connected");
 
-    return channel;
-  } catch (error) {
-    console.log(error);
+      return channel;
+    } catch (error) {
+      console.log("Waiting RabbitMQ...");
+
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
   }
 };
 
