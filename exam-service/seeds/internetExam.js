@@ -1,117 +1,144 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
 
-    await Exam.deleteMany({
-      category: "Internet",
-    });
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.create({
-      course: "Internet",
+      VALUES
 
-      category: "Internet",
+      (
+        'Ujian Dasar Internet',
+        'Internet',
+        'Exam mengenai dasar internet dan jaringan global',
+        30,
+        5,
+        70
+      )
 
-      title: "Ujian Dasar Internet",
+    `);
 
-      description:
-        "Exam mengenai dasar teknologi internet dan jaringan global.",
+    const examResult = await pool.query(`
 
-      duration: 30,
+        SELECT id FROM exams
 
-      totalQuestions: 5,
+        WHERE category='Internet'
 
-      passingScore: 70,
+        ORDER BY id DESC
 
-      questions: [
-        {
-          question: "Apa pengertian internet?",
+        LIMIT 1
 
-          options: [
-            "Jaringan komputer global",
+      `);
 
-            "Perangkat keras komputer",
+    const examId = examResult.rows[0].id;
 
-            "Aplikasi editing",
+    await pool.query(`
 
-            "Bahasa pemrograman",
-          ],
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-          correctAnswer: "Jaringan komputer global",
-        },
+      VALUES
 
-        {
-          question: "Cikal bakal internet modern adalah?",
+      (
+        ${examId},
 
-          options: ["Bluetooth", "ARPANET", "Windows", "Linux"],
+        'Apa pengertian internet?',
 
-          correctAnswer: "ARPANET",
-        },
+        'Jaringan komputer global',
 
-        {
-          question: "Fungsi DNS adalah?",
+        'Perangkat keras',
 
-          options: [
-            "Menghapus data",
+        'Bahasa pemrograman',
 
-            "Menerjemahkan domain menjadi IP Address",
+        'Software editing',
 
-            "Membuat website",
+        'Jaringan komputer global'
+      ),
 
-            "Mengatur RAM",
-          ],
+      (
+        ${examId},
 
-          correctAnswer: "Menerjemahkan domain menjadi IP Address",
-        },
+        'Cikal bakal internet modern adalah?',
 
-        {
-          question: "Perangkat lunak untuk membuka website disebut?",
+        'Linux',
 
-          options: ["Compiler", "Browser", "Driver", "Database"],
+        'ARPANET',
 
-          correctAnswer: "Browser",
-        },
+        'Bluetooth',
 
-        {
-          question: "Protokol utama internet adalah?",
+        'Windows',
 
-          options: ["TCP/IP", "HTTP Only", "SMTP", "FTP"],
+        'ARPANET'
+      ),
 
-          correctAnswer: "TCP/IP",
-        },
-      ],
-    });
+      (
+        ${examId},
+
+        'Fungsi DNS adalah?',
+
+        'Menghapus data',
+
+        'Menerjemahkan domain menjadi IP Address',
+
+        'Mengganti RAM',
+
+        'Mengatur monitor',
+
+        'Menerjemahkan domain menjadi IP Address'
+      ),
+
+      (
+        ${examId},
+
+        'Perangkat lunak untuk membuka website disebut?',
+
+        'Compiler',
+
+        'Browser',
+
+        'Database',
+
+        'Driver',
+
+        'Browser'
+      ),
+
+      (
+        ${examId},
+
+        'Protokol utama internet adalah?',
+
+        'TCP/IP',
+
+        'HTML',
+
+        'SMTP',
+
+        'CSS',
+
+        'TCP/IP'
+      )
+
+    `);
 
     console.log("Exam Internet berhasil dibuat");
 
