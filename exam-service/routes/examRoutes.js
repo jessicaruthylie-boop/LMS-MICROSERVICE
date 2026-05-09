@@ -4,6 +4,62 @@ const router = express.Router();
 
 const pool = require("../config/postgres");
 
+// =========================
+// GET ALL EXAMS
+// =========================
+
+router.get("/", async (req, res) => {
+  try {
+    const exams = await pool.query("SELECT * FROM exams");
+
+    res.json(exams.rows);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+// =========================
+// GET QUESTIONS BY EXAM ID
+// =========================
+
+router.get(
+  "/:id/questions",
+
+  async (req, res) => {
+    try {
+      const examId = req.params.id;
+
+      const questions = await pool.query(
+        `
+          SELECT *
+
+          FROM questions
+
+          WHERE exam_id = $1
+          `,
+
+        [examId],
+      );
+
+      res.json(questions.rows);
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        error: error.message,
+      });
+    }
+  },
+);
+
+// =========================
+// SUBMIT EXAM
+// =========================
+
 router.post(
   "/submit",
 
@@ -19,7 +75,10 @@ router.post(
 
       const questions = await pool.query(
         `
-          SELECT * FROM questions
+          SELECT *
+
+          FROM questions
+
           WHERE exam_id = $1
           `,
 
@@ -48,13 +107,16 @@ router.post(
           status
         )
 
-        VALUES ($1,$2,$3,$4)
+        VALUES
+        ($1,$2,$3,$4)
         `,
 
         [student_name, exam_id, score, status],
       );
 
       res.json({
+        message: "Exam submitted successfully",
+
         student_name,
 
         exam_id,
@@ -66,7 +128,9 @@ router.post(
     } catch (error) {
       console.log(error);
 
-      res.status(500).json(error);
+      res.status(500).json({
+        error: error.message,
+      });
     }
   },
 );
