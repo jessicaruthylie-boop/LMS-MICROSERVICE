@@ -20,12 +20,13 @@ services:
       - rabbitmq
 
   notification-service:
-    build: ./notification-service
-    ports:
-      - "3007:3007"
-    depends_on:
-      - rabbitmq
-
+  build: ./notification-service
+  ports:
+    - "3007:3007"
+  env_file:
+    - ./notification-service/.env
+  depends_on:
+    - rabbitmq
   postgres:
     image: postgres
     environment:
