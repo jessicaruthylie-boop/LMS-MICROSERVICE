@@ -1,124 +1,139 @@
-const mongoose = require("mongoose");
-
-const examSchema = new mongoose.Schema({
-  course: String,
-
-  category: String,
-
-  title: String,
-
-  description: String,
-
-  duration: Number,
-
-  totalQuestions: Number,
-
-  passingScore: Number,
-
-  questions: [
-    {
-      question: String,
-
-      options: [String],
-
-      correctAnswer: String,
-    },
-  ],
-});
-
-const Exam = mongoose.model("Exam", examSchema);
+const pool = require("../config/postgres");
 
 const run = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27018/lms_exam_db");
+    console.log("PostgreSQL Connected");
 
-    console.log("MongoDB Connected");
+    await pool.query(`
+      INSERT INTO exams
+      (
+        title,
+        category,
+        description,
+        duration,
+        total_questions,
+        passing_score
+      )
 
-    await Exam.deleteMany({
-      category: "Komputer",
-    });
+      VALUES
 
-    await Exam.create({
-      course: "Komputer",
+      (
+        'Ujian Dasar Komputer',
+        'Komputer',
+        'Exam mengenai dasar komputer',
+        30,
+        5,
+        70
+      )
 
-      category: "Komputer",
+      RETURNING id
+    `);
 
-      title: "Ujian Dasar Komputer",
+    const examResult = await pool.query(`
+        SELECT id FROM exams
+        WHERE category='Komputer'
+        ORDER BY id DESC
+        LIMIT 1
+      `);
 
-      description: "Exam mengenai dasar teknologi komputer.",
+    const examId = examResult.rows[0].id;
 
-      duration: 30,
+    await pool.query(`
 
-      totalQuestions: 5,
+      INSERT INTO questions
+      (
+        exam_id,
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer
+      )
 
-      passingScore: 70,
+      VALUES
 
-      questions: [
-        {
-          question: "Apa fungsi utama komputer?",
+      (
+        ${examId},
 
-          options: [
-            "Mengolah data",
+        'Apa fungsi utama komputer?',
 
-            "Mencetak uang",
+        'Mengolah data',
 
-            "Menghapus internet",
+        'Mencetak uang',
 
-            "Membuat listrik",
-          ],
+        'Menghapus internet',
 
-          correctAnswer: "Mengolah data",
-        },
+        'Membuat listrik',
 
-        {
-          question: "CPU merupakan?",
+        'Mengolah data'
+      ),
 
-          options: ["Storage", "Otak komputer", "Software", "Browser"],
+      (
+        ${examId},
 
-          correctAnswer: "Otak komputer",
-        },
+        'CPU merupakan?',
 
-        {
-          question: "RAM digunakan untuk?",
+        'Storage',
 
-          options: [
-            "Menyimpan data sementara",
+        'Otak komputer',
 
-            "Menghubungkan internet",
+        'Software',
 
-            "Mencetak gambar",
+        'Browser',
 
-            "Mematikan komputer",
-          ],
+        'Otak komputer'
+      ),
 
-          correctAnswer: "Menyimpan data sementara",
-        },
+      (
+        ${examId},
 
-        {
-          question: "Yang termasuk hardware adalah?",
+        'RAM digunakan untuk?',
 
-          options: [
-            "Google Chrome",
+        'Menyimpan data sementara',
 
-            "Windows",
+        'Menghapus CPU',
 
-            "Motherboard",
+        'Mengatur monitor',
 
-            "Microsoft Word",
-          ],
+        'Mencetak gambar',
 
-          correctAnswer: "Motherboard",
-        },
+        'Menyimpan data sementara'
+      ),
 
-        {
-          question: "Software utama komputer disebut?",
+      (
+        ${examId},
 
-          options: ["Sistem Operasi", "CPU", "RAM", "Monitor"],
+        'Software utama komputer disebut?',
 
-          correctAnswer: "Sistem Operasi",
-        },
-      ],
-    });
+        'Sistem Operasi',
+
+        'Motherboard',
+
+        'CPU',
+
+        'Router',
+
+        'Sistem Operasi'
+      ),
+
+      (
+        ${examId},
+
+        'Yang termasuk hardware adalah?',
+
+        'Motherboard',
+
+        'Google Chrome',
+
+        'Windows',
+
+        'Microsoft Word',
+
+        'Motherboard'
+      )
+
+    `);
 
     console.log("Exam Komputer berhasil dibuat");
 
