@@ -19,8 +19,6 @@ const courseSchema = new mongoose.Schema({
 
   language: String,
 
-  certificate: Boolean,
-
   image: String,
 
   materials: [
