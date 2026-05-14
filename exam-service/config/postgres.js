@@ -1,2 +1,4 @@
-host: "postgres",
-port: 5432 
+module.exports = {
+  host: "postgres",
+  port: 5432,
+};
