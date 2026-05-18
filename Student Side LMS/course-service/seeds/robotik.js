@@ -41,19 +41,9 @@ const run = async () => {
       description:
         "Course lengkap mengenai robotika, sistem robot modern, Artificial Intelligence pada robot, sensor, otomasi industri, drone, dan masa depan teknologi robotik.",
 
-      instructor: "Felix Jonathan",
-
-      level: "Beginner",
-
-      duration: "50 jam",
-
-      rating: 4.9,
-
-      students: 15200,
+      instructor: "Rael Rumahorbo",
 
       language: "Indonesia",
-
-      certificate: true,
 
       image: "robotics-course.jpg",
 
