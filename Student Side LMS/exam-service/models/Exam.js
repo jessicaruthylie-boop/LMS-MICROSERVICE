@@ -3,13 +3,9 @@ const mongoose = require("mongoose");
 const examSchema = new mongoose.Schema({
   course: String,
 
-  category: String,
-
   title: String,
 
   description: String,
-
-  duration: Number,
 
   totalQuestions: Number,
 
