@@ -41,19 +41,9 @@ const run = async () => {
       description:
         "Course lengkap mengenai Artificial Intelligence, Machine Learning, Deep Learning, Neural Network, Computer Vision, hingga perkembangan AI modern.",
 
-      instructor: "Christina Aurelia",
-
-      level: "Beginner",
-
-      duration: "45 jam",
-
-      rating: 4.9,
-
-      students: 15800,
+      instructor: "Septian Hutasoit",
 
       language: "Indonesia",
-
-      certificate: true,
 
       image: "ai-course.jpg",
 
