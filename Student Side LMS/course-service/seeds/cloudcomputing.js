@@ -9,14 +9,6 @@ const courseSchema = new mongoose.Schema({
 
   instructor: String,
 
-  level: String,
-
-  duration: String,
-
-  rating: Number,
-
-  students: Number,
-
   language: String,
 
   image: String,
