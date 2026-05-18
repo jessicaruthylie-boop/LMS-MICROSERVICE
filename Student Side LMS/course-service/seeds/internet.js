@@ -41,7 +41,7 @@ const run = async () => {
       description:
         "Course lengkap mengenai sejarah internet, jaringan global, web technology, protokol internet, keamanan internet, cloud system, dan perkembangan internet modern.",
 
-      instructor: "Felix Jonathan",
+      instructor: "Miranda Gurning",
 
       level: "Beginner",
 
