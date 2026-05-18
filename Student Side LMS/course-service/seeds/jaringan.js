@@ -41,19 +41,9 @@ const run = async () => {
       description:
         "Course lengkap mengenai jaringan komputer, routing, switching, protokol jaringan, internet, wireless network, keamanan jaringan, dan teknologi networking modern.",
 
-      instructor: "Septian Fernando",
-
-      level: "Beginner",
-
-      duration: "48 jam",
-
-      rating: 4.9,
-
-      students: 16500,
+      instructor: "Gracia Sihombing",
 
       language: "Indonesia",
-
-      certificate: true,
 
       image: "networking-course.jpg",
 
