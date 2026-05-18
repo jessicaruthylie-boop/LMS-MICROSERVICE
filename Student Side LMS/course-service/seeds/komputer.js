@@ -11,18 +11,6 @@ const courseSchema = new mongoose.Schema({
 
   level: String,
 
-  duration: String,
-
-  rating: Number,
-
-  students: Number,
-
-  language: String,
-
-  certificate: Boolean,
-
-  image: String,
-
   materials: [
     {
       title: String,
@@ -54,15 +42,7 @@ const run = async () => {
 
       level: "Beginner",
 
-      duration: "40 jam",
-
-      rating: 4.9,
-
-      students: 12500,
-
       language: "Indonesia",
-
-      certificate: true,
 
       image: "computer-course.jpg",
 
