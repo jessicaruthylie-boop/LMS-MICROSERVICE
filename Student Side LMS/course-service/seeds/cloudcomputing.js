@@ -41,19 +41,7 @@ const run = async () => {
       description:
         "Course lengkap mengenai konsep cloud computing, virtualisasi, container, cloud platform, DevOps, distributed system, dan teknologi cloud modern.",
 
-      instructor: "Jessica Ruth",
-
-      level: "Beginner",
-
-      duration: "44 jam",
-
-      rating: 4.9,
-
-      students: 13600,
-
-      language: "Indonesia",
-
-      certificate: true,
+      instructor: "Amos Barimbing",
 
       image: "cloud-computing-course.jpg",
 
