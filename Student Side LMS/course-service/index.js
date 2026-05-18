@@ -6,9 +6,10 @@ const cors = require("cors");
 const connectDB = require("./config/mongodb");
 
 const courseRoutes = require("./routes/courseRoutes");
+const { connectRabbitMQ } = require("./config/rabbitmq");
 
 const app = express();
-
+connectRabbitMQ();
 connectDB();
 
 app.use(cors());
