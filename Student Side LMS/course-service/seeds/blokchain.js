@@ -37,7 +37,7 @@ const run = async () => {
       description:
         "Course lengkap mengenai teknologi Blockchain, Cryptocurrency, Smart Contract, Web3, NFT, dan masa depan teknologi blockchain modern.",
 
-      instructor: "Septian Fernando",
+      instructor: "Okto Sinaga",
 
       level: "Beginner",
 
