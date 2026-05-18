@@ -41,19 +41,9 @@ const run = async () => {
       description:
         "Course lengkap mengenai konsep sistem operasi, manajemen proses, kernel, file system, Linux, Windows, virtualisasi, dan perkembangan operating system modern.",
 
-      instructor: "Christina Aurelia",
-
-      level: "Beginner",
-
-      duration: "46 jam",
-
-      rating: 4.9,
-
-      students: 14800,
+      instructor: "Jessica Ruth",
 
       language: "Indonesia",
-
-      certificate: true,
 
       image: "operating-system-course.jpg",
 
