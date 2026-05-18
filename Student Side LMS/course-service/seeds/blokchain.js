@@ -39,17 +39,7 @@ const run = async () => {
 
       instructor: "Okto Sinaga",
 
-      level: "Beginner",
-
-      duration: "42 jam",
-
-      rating: 4.8,
-
-      students: 11200,
-
       language: "Indonesia",
-
-      certificate: true,
 
       image: "blockchain-course.jpg",
 
