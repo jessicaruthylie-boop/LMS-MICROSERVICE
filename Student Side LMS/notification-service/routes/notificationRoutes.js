@@ -1,28 +1,9 @@
-const pool = require("../config/postgres");
+const express = require("express");
 
-// GET ALL NOTIFICATIONS
-const getNotifications = async (req, res) => {
-  try {
-    const notifications = await pool.query(
-      `
-      SELECT *
+const router = express.Router();
 
-      FROM notifications
+const { getNotifications } = require("../controllers/notificationController");
 
-      ORDER BY id DESC
-      `,
-    );
+router.get("/", getNotifications);
 
-    res.json(notifications.rows);
-  } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      error: error.message,
-    });
-  }
-};
-
-module.exports = {
-  getNotifications,
-};
+module.exports = router;
