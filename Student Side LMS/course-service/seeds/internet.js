@@ -43,17 +43,7 @@ const run = async () => {
 
       instructor: "Miranda Gurning",
 
-      level: "Beginner",
-
-      duration: "38 jam",
-
-      rating: 4.8,
-
-      students: 14200,
-
       language: "Indonesia",
-
-      certificate: true,
 
       image: "internet-course.jpg",
 
