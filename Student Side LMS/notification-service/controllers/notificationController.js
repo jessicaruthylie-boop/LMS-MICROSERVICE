@@ -1,6 +1,5 @@
 const pool = require("../config/postgres");
 
-// GET ALL NOTIFICATIONS
 const getNotifications = async (req, res) => {
   try {
     const notifications = await pool.query(
