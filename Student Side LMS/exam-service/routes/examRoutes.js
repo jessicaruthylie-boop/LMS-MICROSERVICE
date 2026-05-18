@@ -4,10 +4,7 @@ const router = express.Router();
 
 const pool = require("../config/postgres");
 
-// =========================
 // GET ALL EXAMS
-// =========================
-
 router.get("/", async (req, res) => {
   try {
     const exams = await pool.query("SELECT * FROM exams");
@@ -22,10 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// =========================
 // GET QUESTIONS BY EXAM ID
-// =========================
-
 router.get(
   "/:id/questions",
 
@@ -56,9 +50,7 @@ router.get(
   },
 );
 
-// =========================
 // SUBMIT EXAM
-// =========================
 
 router.post(
   "/submit",
