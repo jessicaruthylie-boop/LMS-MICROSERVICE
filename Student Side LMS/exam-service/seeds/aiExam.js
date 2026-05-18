@@ -3,32 +3,28 @@ const pool = require("../config/postgres");
 const run = async () => {
   try {
     console.log("PostgreSQL Connected");
-
     await pool.query(`
 
-      INSERT INTO exams
-      (
-        title,
-        category,
-        description,
-        duration,
-        total_questions,
-        passing_score
-      )
+  INSERT INTO exams
+  (
+    title,
+    category,
+    description,
+    total_questions,
+    passing_score
+  )
 
-      VALUES
+  VALUES
 
-      (
-        'Ujian Dasar Artificial Intelligence',
-        'Artificial Intelligence',
-        'Exam mengenai dasar AI dan Machine Learning',
-        35,
-        5,
-        70
-      )
+  (
+    'Ujian Dasar Artificial Intelligence',
+    'Artificial Intelligence',
+    'Exam mengenai dasar AI dan Machine Learning',
+    5,
+    70
+  )
 
-    `);
-
+`);
     const examResult = await pool.query(`
 
         SELECT id FROM exams
