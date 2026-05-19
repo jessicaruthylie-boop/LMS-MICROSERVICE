@@ -29,14 +29,3 @@ services:
 
     depends_on:
       - admin-postgres
-
-  admin-service:
-    build: ./admin-service
-
-    container_name: admin-panel-service
-
-    ports:
-      - "3005:3005"
-
-    depends_on:
-      - admin-postgres
