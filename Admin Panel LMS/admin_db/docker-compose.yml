@@ -1,0 +1,27 @@
+services:
+  admin-postgres:
+    image: postgres
+
+    container_name: admin-panel-postgres
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: admin_db
+
+    ports:
+      - "5434:5432"
+
+    volumes:
+      - ./admin_db/init-scripts:/docker-entrypoint-initdb.d
+
+  admin-service:
+    build: ./admin-service
+
+    container_name: admin-panel-service
+
+    ports:
+      - "3005:3005"
+
+    depends_on:
+      - admin-postgres
