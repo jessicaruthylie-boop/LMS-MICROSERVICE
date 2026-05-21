@@ -24,3 +24,7 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log("Course Service Running on 3002");
 });
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Admin service running on port ${PORT}`);
+});

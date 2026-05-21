@@ -16,16 +16,18 @@ services:
       - ./admin_db/init-scripts:/docker-entrypoint-initdb.d
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
 
     container_name: admin-pgadmin
 
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_PASSWORD: admin123
 
     ports:
       - "8888:80"
+
+    restart: always
 
     depends_on:
       - admin-postgres
