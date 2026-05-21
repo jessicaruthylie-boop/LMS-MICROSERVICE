@@ -6,10 +6,9 @@ const cors = require("cors");
 const connectDB = require("./config/mongodb");
 
 const courseRoutes = require("./routes/courseRoutes");
-const { connectRabbitMQ } = require("./config/rabbitmq");
 
 const app = express();
-connectRabbitMQ();
+
 connectDB();
 
 app.use(cors());
@@ -21,10 +20,8 @@ app.get("/", (req, res) => {
   res.send("Course Service Running");
 });
 
-app.listen(process.env.PORT, () => {
-  console.log("Course Service Running on 3002");
-});
+const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Admin service running on port ${PORT}`);
+  console.log(`Course Service running on ${PORT}`);
 });
